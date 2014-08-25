@@ -14,32 +14,44 @@ function findRecursiveImages($path) {
 }
 
 Route::post('redactor/upload/image', function() {
-    // Check for incoming file
-    if (Input::hasFile('file')) { 
-        // Make sure the image matches a mimetype
-        if(in_array(Input::file('file')->getMimeType(), Config::get('laravel-redactor::config.image_mime_types'))) { 
-            $destination = Config::get('laravel-redactor::config.image_upload_path') . str_random(6);
-            // Upload th image
-            $path = Input::file('file')->move($destination, Input::file('file')->getClientOriginalName()); 
-            return Response::json(array(
-                'filelink' => (string)$path)
-            );
+    try {
+        // Check for incoming file
+        if (Input::hasFile('file')) { 
+            // Make sure the image matches a mimetype
+            if(in_array(Input::file('file')->getMimeType(), Config::get('laravel-redactor::config.image_mime_types'))) { 
+                $destination = Config::get('laravel-redactor::config.image_upload_path') . str_random(6);
+                // Upload th image
+                $path = Input::file('file')->move($destination, Input::file('file')->getClientOriginalName()); 
+                return Response::json(array(
+                    'filelink' => (string)$path)
+                );
+            }
         }
-    }
+    } catch (Exception $e) {
+        return Response::json(array(
+            'error' => 'Error uploading Image.',
+        ));
+    };
 });
 
 Route::post('redactor/upload/file', function() {
-    // Check for incoming file
-    if (Input::hasFile('file')) {
-        $destination = Config::get('laravel-redactor::config.file_upload_path') . str_random(6);
-         // Upload th image
-        $path = Input::file('file')->move($destination, Input::file('file')->getClientOriginalName());
+    try {
+        // Check for incoming file
+        if (Input::hasFile('file')) {
+            $destination = Config::get('laravel-redactor::config.file_upload_path') . str_random(6);
+             // Upload th image
+            $path = Input::file('file')->move($destination, Input::file('file')->getClientOriginalName());
+            return Response::json(array(
+                'filelink' => (string)$path,
+                'filename' => basename($path)
+                )
+            );
+        }
+    } catch (Exception $e) {
         return Response::json(array(
-            'filelink' => (string)$path,
-            'filename' => basename($path)
-            )
-        );
-    }
+            'error' => 'Error uploading Image.',
+        ));
+    };
 });
 
 Route::get('redactor/images', function() {
