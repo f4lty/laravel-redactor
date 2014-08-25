@@ -16,11 +16,11 @@ function findRecursiveImages($path) {
 Route::post('redactor/upload/image', function() {
     // Check for incoming file
     if (Input::hasFile('file')) { 
-        $mineTypes = array('image/png', 'image/jpg', 'image/gif', 'image/jpeg', 'image/pjpeg' );
         // Make sure the image matches a mimetype
-        if(in_array(Input::file('file')->getMimeType(), $mineTypes)) { 
+        if(in_array(Input::file('file')->getMimeType(), Config::get('laravel-redactor::config.image_mime_types'))) { 
+            $destination = Config::get('laravel-redactor::config.image_upload_path') . str_random(6);
             // Upload th image
-            $path = Input::file('file')->move('upload/images/' . str_random(6), Input::file('file')->getClientOriginalName()); 
+            $path = Input::file('file')->move($destination, Input::file('file')->getClientOriginalName()); 
             return Response::json(array(
                 'filelink' => (string)$path)
             );
@@ -31,8 +31,9 @@ Route::post('redactor/upload/image', function() {
 Route::post('redactor/upload/file', function() {
     // Check for incoming file
     if (Input::hasFile('file')) {
+        $destination = Config::get('laravel-redactor::config.file_upload_path') . str_random(6);
          // Upload th image
-        $path = Input::file('file')->move('upload/files/' . str_random(6), Input::file('file')->getClientOriginalName());
+        $path = Input::file('file')->move($destination, Input::file('file')->getClientOriginalName());
         return Response::json(array(
             'filelink' => (string)$path,
             'filename' => basename($path)
