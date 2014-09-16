@@ -23,7 +23,7 @@ Route::post('redactor/upload/image', function() {
                 // Upload th image
                 $path = Input::file('file')->move($destination, Input::file('file')->getClientOriginalName()); 
                 return Response::json(array(
-                    'filelink' => "/".  (string)$path,
+                    'filelink' => '/' . (string)$path)
                 );
             }
         }
@@ -42,8 +42,8 @@ Route::post('redactor/upload/file', function() {
              // Upload th image
             $path = Input::file('file')->move($destination, Input::file('file')->getClientOriginalName());
             return Response::json(array(
-                'filelink' => "/".  (string)$path,
-                'filename' => basename($path)
+                    'filelink' => '/' . (string)$path,
+                    'filename' => basename($path)
                 )
             );
         }
